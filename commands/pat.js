@@ -17,28 +17,17 @@ function patImage() {
 
 
 export function patEmbed(client, body){
-  let nickname = body.member.nick ? body.member.nick : body.member.user.username;
+  let nickname = body.member.user.id ? body.data.options[0].value : body.member.user.id;
   let embed = new EmbedBuilder()
     .setColor(0xc55000)
   
-  if("options" in body.data === true){ // replace name with person
-    let userID = client.users.fetch(body.data.options[0].value);
-    console.log(body.guild_id);
-    const guild = client.fetchGuildPreview(body.guild_id);
-    console.log(guild);
-    guild.then(value => {
-      console.log(value);
-    })
-    console.log(body.data.options[0].value);
-    userID.then(value => { 
-      console.log(value);
-      //let description = "There there " + value.username + ", everything will be okay.";
-      //console.log(description);
-      //embed.setDescription(description);
-      //return {embed: embed, image:patImage()};
-    })
-  } 
-    let description = "There there " + nickname + ", everything will be okay.";
+  // if("options" in body.data === true){ // replace name with person
+  //   let userID = client.users.fetch(body.data.options[0].value);
+  //   console.log(body);
+  //   const guild = client.fetchGuildPreview(body.guild_id);
+  //   console.log(client.users.fetch);
+  // } 
+    let description = "There there <@" + nickname + ">, everything will be okay.";
     embed.setDescription(description);
     return {embed: embed, image:patImage()};
   
