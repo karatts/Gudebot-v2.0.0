@@ -9,7 +9,12 @@ import {
 } from 'discord-interactions';
 import { VerifyDiscordRequest, getRandomEmoji, DiscordRequest } from './utils.js';
 import { getShuffledOptions, getResult } from './game.js';
-import {
+
+import { createRequire } from "module"; // Bring in the ability to create the 'require' method
+const require = createRequire(import.meta.url); // construct the require method
+
+const fs = require('node:fs');
+const {
   Client,
   Events,
   Collection,
@@ -17,7 +22,8 @@ import {
   IntentsBitField,
   EmbedBuilder,
   SlashCommandBuilder,
-} from 'discord.js';
+} = require("discord.js");
+
 
 // Create an express app
 const app = express();
