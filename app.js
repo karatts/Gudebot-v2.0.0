@@ -10,6 +10,9 @@ import {
 import { VerifyDiscordRequest, getRandomEmoji, DiscordRequest } from './utils.js';
 import { getShuffledOptions, getResult } from './game.js';
 
+import patEmbed from './commands/pat.js';
+import emotionalSupportResponse from './commands/emotionSupportResponse.js';
+
 import { createRequire } from "module"; // Bring in the ability to create the 'require' method
 const require = createRequire(import.meta.url); // construct the require method
 
