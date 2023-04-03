@@ -15,20 +15,14 @@ function patImage() {
   return pats[(Math.floor(Math.random() * pats.length))];
 }
 
-
 export function patEmbed(client, body){
-  let nickname = body.member.user.id ? body.data.options[0].value : body.member.user.id;
+  let nickname = body.member.user.id;
+  if(body.data.options){
+    nickname = body.data.options[0].value;
+  }
+  let description = "There there <@" + nickname + ">, everything will be okay.";
   let embed = new EmbedBuilder()
     .setColor(0xc55000)
-  
-  // if("options" in body.data === true){ // replace name with person
-  //   let userID = client.users.fetch(body.data.options[0].value);
-  //   console.log(body);
-  //   const guild = client.fetchGuildPreview(body.guild_id);
-  //   console.log(client.users.fetch);
-  // } 
-    let description = "There there <@" + nickname + ">, everything will be okay.";
-    embed.setDescription(description);
-    return {embed: embed, image:patImage()};
-  
+    .setDescription(description);
+  return {embed: embed, image:patImage()};
 }
