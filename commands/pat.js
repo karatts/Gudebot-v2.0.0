@@ -1,7 +1,13 @@
 import { EmbedBuilder } from 'discord.js';
 
-export function patEmbed(member){
-  let nickname = member.nick ? member.nick : member.user.username;
+export function patEmbed(body){
+  let nickname = body.member.nick ? body.member.nick : body.member.user.username;
+  
+  if("options" in body.data === true){ // replace name with person
+    console.log(body.data.options[0].value);
+    let nickname = body.member.nick ? body.member.nick : body.member.user.username;
+  }
+  
   let description = "There there " + nickname + ", everything will be okay.";
 
   let embed = new EmbedBuilder()

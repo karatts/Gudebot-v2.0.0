@@ -179,7 +179,7 @@ app.post('/interactions', async function (req, res) {
     }
         // "pat" guild command
     if (name === "pat") {
-      let embedParts = patEmbed(req.body.member);
+      let embedParts = patEmbed(req.body);
       let embed = embedParts.embed;
       embed.setImage(embedParts.image);
 
