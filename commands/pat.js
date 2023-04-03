@@ -23,17 +23,23 @@ export function patEmbed(client, body){
   
   if("options" in body.data === true){ // replace name with person
     let userID = client.users.fetch(body.data.options[0].value);
+    console.log(body.guild_id);
     const guild = client.fetchGuildPreview(body.guild_id);
+    console.log(guild);
+    guild.then(value => {
+      console.log(value);
+    })
     console.log(body.data.options[0].value);
     userID.then(value => { 
-      let description = "There there " + value.username + ", everything will be okay.";
-      embed.setDescription(description);
-      return {embed: embed, image:patImage()};
+      console.log(value);
+      //let description = "There there " + value.username + ", everything will be okay.";
+      //console.log(description);
+      //embed.setDescription(description);
+      //return {embed: embed, image:patImage()};
     })
-  } else {
+  } 
     let description = "There there " + nickname + ", everything will be okay.";
     embed.setDescription(description);
     return {embed: embed, image:patImage()};
-  }
   
 }
