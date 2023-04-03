@@ -45,6 +45,7 @@ const client = new Client({ intents: [GatewayIntentBits.Guilds] });
 client.once(Events.ClientReady, () => {
   console.log(`Ready! Logged in as ${client.user.tag}`);
   tracking = JSON.parse(fs.readFileSync('./files/track.json'));
+  console.log(tracking);
 });
 
 client.on(Events.InteractionCreate, async interaction => {
