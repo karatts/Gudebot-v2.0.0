@@ -10,7 +10,14 @@ const EMOTIONAL_SUPPORT_COMMAND = {
 const PAT_COMMAND = {
   name: 'pat',
   description: 'pat command',
-  type: 1,
+  options: [
+    {
+      "type": 6,
+      "name": "user",
+      "description": "The user you are patting",
+      "required": false
+    }
+  ]
 };
 
 const TRACK_COMMAND = {
@@ -31,6 +38,10 @@ const TRACK_COMMAND = {
         {
           "name": "No Event",
           "value": "none"
+        },
+        {
+          "name": "Easter",
+          "value": "easter"
         }
       ]
     },
