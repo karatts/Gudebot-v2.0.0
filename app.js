@@ -8,10 +8,9 @@ import {
   ButtonStyleTypes,
 } from 'discord-interactions';
 import { VerifyDiscordRequest, getRandomEmoji, DiscordRequest } from './utils.js';
-import { getShuffledOptions, getResult } from './game.js';
 
-import patEmbed from './commands/pat.js';
-import emotionalSupportResponse from './commands/emotionSupportResponse.js';
+import { patEmbed } from './commands/pat.js';
+import { emotionalSupportResponse } from './commands/emotionalsupport.js';
 
 import { createRequire } from "module"; // Bring in the ability to create the 'require' method
 const require = createRequire(import.meta.url); // construct the require method
@@ -33,9 +32,6 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 // Parse request body and verifies incoming requests using discord-interactions package
 app.use(express.json({ verify: VerifyDiscordRequest(process.env.PUBLIC_KEY) }));
-
-// Store for in-progress games. In production, you'd want to use a DB
-const activeGames = {};
 
 const karutaUID = '646937666251915264'; //karuta bot id
 
@@ -172,17 +168,6 @@ app.post('/interactions', async function (req, res) {
   if (type === InteractionType.APPLICATION_COMMAND) {
     const { name } = data;
 
-    // "test" command
-    if (name === 'test') {
-      // Send a message into the channel where command was triggered from
-      return res.send({
-        type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
-        data: {
-          // Fetches a random emoji to send from a helper function
-          content: 'hello world ' + getRandomEmoji(),
-        },
-      });
-    }
     // "emotionalsupport" guild command
     if (name === "emotionalsupport") {
       // Send a message into the channel where command was triggered from
