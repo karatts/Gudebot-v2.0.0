@@ -14,6 +14,7 @@ import { emotionalSupportResponse } from './commands/emotionalsupport.js';
 
 import { wishlistMessage } from './commands/track/wishlist.js';
 import { vday } from './commands/track/vday.js';
+import { updateEasterTracking, eggHunt } from './commands/track/easter.js';
 import { emoteTracking } from './commands/track/emote.js';
 
 import { createRequire } from "module"; // Bring in the ability to create the 'require' method
@@ -48,11 +49,14 @@ const client = new Client({
 });
 
 const karutaUID = '646937666251915264'; //karuta bot id
+const testerUID = '1040041183658922046';
 let tracking;
+let eggTracking;
 
 client.once(Events.ClientReady, () => {
   console.log(`Ready! Logged in as ${client.user.tag}`);
   tracking = JSON.parse(fs.readFileSync('./files/track.json'));
+  eggTracking = JSON.parse(fs.readFileSync('./files/egg-track.json'));
 });
 
 client.on(Events.InteractionCreate, async interaction => {
@@ -76,20 +80,34 @@ client.on("messageCreate", (message) => {
   console.log('writing in a server...');
   let trackedChannels = Object.keys(tracking);
   
-  // Wishlist Messaging
-  const testerUID = '1040041183658922046';
-  if(message.author.id === karutaUID && trackedChannels.includes(message.channelId)){
-    if(tracking[message.channelId].wishlist === 'enabled' && message.content.includes('A card from your wishlist is dropping!')){
+  if(trackedChannels.includes(message.channelId)){
+    console.log('Looking at a tracked channel ' + message.channelId);
+    //const channel = message.client.channels.cache.find(channel => channel.id);
+    
+    // wishlist message
+    if(message.author.id === karutaUID && tracking[message.channelId].wishlist === 'enabled' && message.content.includes('A card from your wishlist is dropping!')){
       wishlistMessage(message);
     }
-  }
-  
-  if(message.author.id === karutaUID && trackedChannels.includes(message.channelId)){
-    console.log('Looking at a tracked channel ' + message.channelId);
-    const channel = message.client.channels.cache.find(channel => channel.id);
-    if((tracking[message.channelId].event === 'vday')){
-      console.log('Vday tracking on...');
+    //track vday
+    if(tracking[message.channelId].event === 'vday'){
       vday(message, karutaUID, tracking);
+    }
+    //track easter
+    if(tracking[message.channelId].event === 'easter'){
+      if (message.content.toLowerCase() === 'gudegg'){
+        // check eggs
+        message.channel.send('You\'re missing a lot of eggs.');
+      }
+       // Respond to kevent
+      if(message.author.id === karutaUID) {
+        // Respond to kevent
+        if(message.embeds && message.embeds[0] && message.embeds[0].data && message.embeds[0].data.title === "Hamako's Springtide Shack"){
+          updateEasterTracking(message, karutaUID, eggTracking);
+        }
+        
+        //respond to dropped cards with egg emotes
+        eggHunt(message, karutaUID, eggTracking);
+      }
     }
   }
 });

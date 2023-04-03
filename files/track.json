@@ -1,6 +1,6 @@
 {
   "1031409470003224617": {
-    "event": "none",
+    "event": "easter",
     "wishlist": "enabled",
     "testing": "disabled"
   },
@@ -15,7 +15,12 @@
     "testing": "enabled"
   },
   "1076167508689698958": {
-    "event": "none",
+    "event": "easter",
+    "wishlist": "enabled",
+    "testing": "disabled"
+  },
+  "1092027300687663154": {
+    "event": "easter",
     "wishlist": "enabled",
     "testing": "disabled"
   }
