@@ -9,6 +9,15 @@ import {
 } from 'discord-interactions';
 import { VerifyDiscordRequest, getRandomEmoji, DiscordRequest } from './utils.js';
 import { getShuffledOptions, getResult } from './game.js';
+import {
+  Client,
+  Events,
+  Collection,
+  GatewayIntentBits,
+  IntentsBitField,
+  EmbedBuilder,
+  SlashCommandBuilder,
+} from 'discord.js';
 
 // Create an express app
 const app = express();
@@ -52,6 +61,43 @@ app.post('/interactions', async function (req, res) {
         },
       });
     }
+    // "emotionalsupport" guild command
+    if (name === "emotionalsupport") {
+      // Send a message into the channel where command was triggered from
+      let nickname = req.body.member.nick
+        ? req.body.member.nick
+        : req.body.member.user.username;
+
+      return res.send({
+        type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+        data: {
+          content: "There there " + nickname + ", everything will be okay.",
+        },
+      });
+    }
+        // "pat" guild command
+    if (name === "pat") {
+      // Send a message into the channel where command was triggered from
+
+      let nickname = req.body.member.nick
+        ? req.body.member.nick
+        : req.body.member.user.username;
+      const description =
+        "There there " + nickname + ", everything will be okay.";
+
+      const esEmbed = new EmbedBuilder()
+        .setColor(0xc55000)
+        .setTitle(description)
+        .setImage("https://i.imgur.com/RYg23Nz.gif");
+
+      return res.send({
+        type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
+        data: {
+          embeds: [esEmbed],
+        },
+      });
+    }
+
   }
 });
 

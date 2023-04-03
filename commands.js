@@ -40,6 +40,12 @@ const CHALLENGE_COMMAND = {
   type: 1,
 };
 
-const ALL_COMMANDS = [TEST_COMMAND, CHALLENGE_COMMAND];
+const EMOTIONAL_SUPPORT_COMMAND = {
+  name: 'emotionalsupport',
+  description: 'Emotional support command',
+  type: 1,
+};
+
+const ALL_COMMANDS = [TEST_COMMAND, CHALLENGE_COMMAND, EMOTIONAL_SUPPORT_COMMAND];
 
 InstallGlobalCommands(process.env.APP_ID, ALL_COMMANDS);
