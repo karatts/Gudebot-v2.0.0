@@ -14,7 +14,7 @@ import { emotionalSupportResponse } from './commands/emotionalsupport.js';
 
 import { wishlistMessage } from './commands/track/wishlist.js';
 import { vday } from './commands/track/vday.js';
-import { updateEasterTracking, eggHunt } from './commands/track/easter.js';
+import { updateEasterTracking, eggHunt, updateBasket } from './commands/track/easter.js';
 import { emoteTracking } from './commands/track/emote.js';
 
 import { createRequire } from "module"; // Bring in the ability to create the 'require' method
@@ -96,17 +96,56 @@ client.on("messageCreate", (message) => {
     if(tracking[message.channelId].event === 'easter'){
       if (message.content.toLowerCase() === 'gudegg'){
         // check eggs
-        message.channel.send('You\'re missing a lot of eggs.');
+        let eggUsers = Object.keys(eggTracking);
+        let eggMessage = 'You are missing the following eggs: \n > ';
+        if(eggUsers.includes(message.author.id)){
+          eggTracking[message.author.id].eggNumbers.forEach((egg) => {
+            eggMessage += egg + ' ';
+          });
+        }
+        message.channel.send(eggMessage);
       }
+      
+      if(message.content.toLowerCase() === 'gudegg track'){
+        let eggUsers = Object.keys(eggTracking);
+        if(eggUsers.includes(message.author.id) && eggTracking[message.author.id].channels.includes(message.channelId)){
+          let eggTrackedChannels = eggTracking[message.author.id].channels;
+          message.channel.send('Tracking removed from this channel');
+          const index = eggTrackedChannels.indexOf(message.channelId);
+          eggTrackedChannels.splice(index, 1);
+          eggTracking[message.author.id].channels = eggTrackedChannels;
+        } else {
+          eggTracking[message.author.id].channels.push(message.channelId);
+          message.channel.send("You are now tracking this channel.");
+        }
+        const jsonString = JSON.stringify(eggTracking, null, 2); // write to file
+        fs.writeFile('./files/egg-track.json', jsonString, err => {
+          if (err) return console.log(err);
+        });
+      } 
+      
        // Respond to kevent
       if(message.author.id === karutaUID) {
         // Respond to kevent
         if(message.embeds && message.embeds[0] && message.embeds[0].data && message.embeds[0].data.title === "Hamako's Springtide Shack"){
-          updateEasterTracking(message, karutaUID, eggTracking);
+          eggTracking = updateEasterTracking(message, eggTracking);
+          
+          const jsonString = JSON.stringify(eggTracking, null, 2); // write to file
+          fs.writeFile('./files/egg-track.json', jsonString, err => {
+            if (err) return console.log(err);
+          });
         }
         
-        //respond to dropped cards with egg emotes
-        eggHunt(message, karutaUID, eggTracking);
+        if(message.content.includes('dropping')){
+          eggHunt(message, karutaUID, eggTracking);
+        }
+        if(message.content.includes('into your basket!')){
+          eggTracking = updateBasket(message, eggTracking);
+          const jsonString = JSON.stringify(eggTracking, null, 2); // write to file
+          fs.writeFile('./files/egg-track.json', jsonString, err => {
+            if (err) return console.log(err);
+          });
+        }
       }
     }
   }
