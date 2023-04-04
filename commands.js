@@ -1,5 +1,5 @@
 import 'dotenv/config';
-import { capitalize, InstallGlobalCommands } from './utils.js';
+import { InstallGlobalCommands } from './utils.js';
 
 const EMOTIONAL_SUPPORT_COMMAND = {
   name: 'emotionalsupport',
@@ -18,6 +18,12 @@ const PAT_COMMAND = {
       "required": false
     }
   ]
+};
+
+const EMOTE_TRACKING_COMMAND = {
+  name: 'emote tracking',
+  description: 'emote tracking command',
+  type: 1,
 };
 
 const TRACK_COMMAND = {
@@ -80,6 +86,6 @@ const TRACK_COMMAND = {
   ]
 };
 
-const ALL_COMMANDS = [EMOTIONAL_SUPPORT_COMMAND, PAT_COMMAND, TRACK_COMMAND];
+const ALL_COMMANDS = [EMOTIONAL_SUPPORT_COMMAND, PAT_COMMAND, TRACK_COMMAND, EMOTE_TRACKING_COMMAND];
 
 InstallGlobalCommands(process.env.APP_ID, ALL_COMMANDS);

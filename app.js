@@ -7,10 +7,15 @@ import {
   MessageComponentTypes,
   ButtonStyleTypes,
 } from 'discord-interactions';
-import { VerifyDiscordRequest, getRandomEmoji, DiscordRequest } from './utils.js';
+import { VerifyDiscordRequest, DiscordRequest } from './utils.js';
 
 import { patEmbed } from './commands/pat.js';
 import { emotionalSupportResponse } from './commands/emotionalsupport.js';
+
+import { wishlistMessage } from './commands/track/wishlist.js';
+import { vday } from './commands/track/vday.js';
+import { updateEasterTracking, eggHunt, updateBasket } from './commands/track/easter.js';
+import { emoteTracking } from './commands/track/emote.js';
 
 import { createRequire } from "module"; // Bring in the ability to create the 'require' method
 const require = createRequire(import.meta.url); // construct the require method
@@ -33,13 +38,6 @@ const PORT = process.env.PORT || 3000;
 // Parse request body and verifies incoming requests using discord-interactions package
 app.use(express.json({ verify: VerifyDiscordRequest(process.env.PUBLIC_KEY) }));
 
-const karutaUID = '646937666251915264'; //karuta bot id
-
-let tracking;
-const wishlistExpire = new EmbedBuilder()
-  .setColor(0xeed202)
-  .setDescription('** The wishlisted drop is expiring in 5 seconds. If the wishlister has not grabbed it yet, please grab the card for them. **')
-
 const client = new Client({
   intents: [
     GatewayIntentBits.Guilds,
@@ -50,9 +48,15 @@ const client = new Client({
   ],
 });
 
+const karutaUID = '646937666251915264'; //karuta bot id
+const testerUID = '1040041183658922046';
+let tracking;
+let eggTracking;
+
 client.once(Events.ClientReady, () => {
   console.log(`Ready! Logged in as ${client.user.tag}`);
   tracking = JSON.parse(fs.readFileSync('./files/track.json'));
+  eggTracking = JSON.parse(fs.readFileSync('./files/egg-track.json'));
 });
 
 client.on(Events.InteractionCreate, async interaction => {
@@ -76,79 +80,73 @@ client.on("messageCreate", (message) => {
   console.log('writing in a server...');
   let trackedChannels = Object.keys(tracking);
   
-  // Wishlist Messaging
-  if(message.author.id === karutaUID && trackedChannels.includes(message.channelId)){
-    if(tracking[message.channelId].wishlist === 'enabled' && message.content.includes('A card from your wishlist is dropping!')){
-      let wishlisters = message.content.split('A card from your wishlist is dropping!');
-      wishlisters = wishlisters[1].split(/[ ]+/);
-      
-      let wishlistString = "";
-      wishlisters.forEach(wisher => {
-        console.log(wisher.trim());
-        if(wisher !== ''){
-          wishlistString += "> "+wisher+"\n";
-        }
-      });
-      
-      let wishlistWarning = new EmbedBuilder()
-        .setColor(0xff0033)
-        .setTitle('A WISHLISTED CARD IS DROPPING')
-        .setDescription('**Please __DO NOT GRAB__ unless you are the wishlister(s): ** \n ' + wishlistString)
-        .setFooter({text: 'If you are not a wishlister and you grab OR fight for the wishlisted card, you will be temporarily banned from ALL gamba channels for 24 hours.'})
-      
-      setTimeout(() => {
-        message.channel.send({embeds: [wishlistWarning]});
-      }, 500);
-      setTimeout(() => {
-        message.channel.send({embeds: [wishlistWarning]});
-      }, 3000);
-      setTimeout(() => {
-        message.channel.send({embeds: [wishlistExpire]});
-      }, 52500); 
-    }
-  }
-  
-  if(message.author.id === karutaUID && trackedChannels.includes(message.channelId)){
+  if(trackedChannels.includes(message.channelId)){
     console.log('Looking at a tracked channel ' + message.channelId);
-    const channel = message.client.channels.cache.find(channel => channel.id);
-    if((tracking[message.channelId].event === 'vday')){
-      console.log('Vday tracking on...');
-        
-      const filter = (reaction, user) => {
-        return (['🌼','🌹','💐','🌻','🌷'].includes(reaction.emoji.name) && user.id === karutaUID);
-      };
-        
-      message.awaitReactions({ filter, max: 6, time: 6000, errors: ['time'] })
-        .then(collected => {
-          console.log('Collecting...');
-        })
-        .catch(collected => {
-          for (let [key, value] of collected) {
-            console.log(key + " = " + value);
+    //const channel = message.client.channels.cache.find(channel => channel.id);
+    
+    // wishlist message
+    if(message.author.id === karutaUID && tracking[message.channelId].wishlist === 'enabled' && message.content.includes('A card from your wishlist is dropping!')){
+      wishlistMessage(message);
+    }
+    //track vday
+    if(tracking[message.channelId].event === 'vday'){
+      vday(message, karutaUID, tracking);
+    }
+    //track easter
+    if(tracking[message.channelId].event === 'easter'){
+      if (message.content.toLowerCase() === 'gudegg'){
+        // check eggs
+        let eggUsers = Object.keys(eggTracking);
+        let eggMessage = 'You are missing the following eggs: \n > ';
+        if(eggUsers.includes(message.author.id)){
+          eggTracking[message.author.id].eggNumbers.forEach((egg) => {
+            eggMessage += egg + ' ';
+          });
+        }
+        message.channel.send(eggMessage);
+      }
+      
+      if(message.content.toLowerCase() === 'gudegg track'){
+        let eggUsers = Object.keys(eggTracking);
+        if(eggUsers.includes(message.author.id) && eggTracking[message.author.id].channels.includes(message.channelId)){
+          let eggTrackedChannels = eggTracking[message.author.id].channels;
+          message.channel.send('Tracking removed from this channel');
+          const index = eggTrackedChannels.indexOf(message.channelId);
+          eggTrackedChannels.splice(index, 1);
+          eggTracking[message.author.id].channels = eggTrackedChannels;
+        } else {
+          eggTracking[message.author.id].channels.push(message.channelId);
+          message.channel.send("You are now tracking this channel.");
+        }
+        const jsonString = JSON.stringify(eggTracking, null, 2); // write to file
+        fs.writeFile('./files/egg-track.json', jsonString, err => {
+          if (err) return console.log(err);
+        });
+      } 
+      
+       // Respond to kevent
+      if(message.author.id === karutaUID) {
+        // Respond to kevent
+        if(message.embeds && message.embeds[0] && message.embeds[0].data && message.embeds[0].data.title === "Hamako's Springtide Shack"){
+          eggTracking = updateEasterTracking(message, eggTracking);
           
-            switch(key) {
-              case '🌼':
-                message.channel.send('A <@&1073409722335633490> has dropped!')
-                console.log('Blossom has dropped!')
-                break;
-              case '🌹':
-                message.channel.send('A <@&1073409614625914940> has dropped!')
-                console.log('Rose has dropped!')
-                break;
-              case '🌻':
-                message.channel.send('A <@&1073409651850350622> has dropped!')
-                console.log('Sunflower has dropped!')
-                break;
-              case '🌷':
-                message.channel.send('A <@&1073409677376880742> has dropped!')
-                console.log('Tulip has dropped!')
-                break;
-              default:
-                message.channel.send('A bouquet of <@&1073409677376880742>s, <@&1073409722335633490>s, <@&1073409614625914940>s,and <@&1073409651850350622>s has dropped!')
-            }
-          }
-        console.log('All reactions loaded');
-      });
+          const jsonString = JSON.stringify(eggTracking, null, 2); // write to file
+          fs.writeFile('./files/egg-track.json', jsonString, err => {
+            if (err) return console.log(err);
+          });
+        }
+        
+        if(message.content.includes('dropping')){
+          eggHunt(message, karutaUID, eggTracking);
+        }
+        if(message.content.includes('into your basket!')){
+          eggTracking = updateBasket(message, eggTracking);
+          const jsonString = JSON.stringify(eggTracking, null, 2); // write to file
+          fs.writeFile('./files/egg-track.json', jsonString, err => {
+            if (err) return console.log(err);
+          });
+        }
+      }
     }
   }
 });
@@ -199,14 +197,13 @@ app.post('/interactions', async function (req, res) {
       });
     }
     
+    if (name === "emote tracking") {
+      emoteTracking();
+    }
+    
     if (name === "track") {
       let channel = req.body.channel_id;
       let server = req.body.guild_id;
-//       let trackedServers = Object.keys(tracking);
-      
-//       for(let i = 0; i<trackedServers.length; i++){
-        
-//       }
       
       let trackedChannels = Object.keys(tracking);
       
