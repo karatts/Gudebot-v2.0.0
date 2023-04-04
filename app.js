@@ -102,21 +102,27 @@ client.on("messageCreate", (message) => {
           eggTracking[message.author.id].eggNumbers.forEach((egg) => {
             eggMessage += egg + ' ';
           });
+           message.channel.send(eggMessage);
+        } else {
+          message.channel.send('Please type `kevent` and then `gudegg track` to get started!');
         }
-        message.channel.send(eggMessage);
       }
       
       if(message.content.toLowerCase() === 'gudegg track'){
         let eggUsers = Object.keys(eggTracking);
-        if(eggUsers.includes(message.author.id) && eggTracking[message.author.id].channels.includes(message.channelId)){
-          let eggTrackedChannels = eggTracking[message.author.id].channels;
-          message.channel.send('Tracking removed from this channel');
-          const index = eggTrackedChannels.indexOf(message.channelId);
-          eggTrackedChannels.splice(index, 1);
-          eggTracking[message.author.id].channels = eggTrackedChannels;
+        if(eggUsers.includes(message.author.id)){
+          if(eggTracking[message.author.id].channels.includes(message.channelId)){
+            let eggTrackedChannels = eggTracking[message.author.id].channels;
+            message.channel.send('Tracking removed from this channel');
+            const index = eggTrackedChannels.indexOf(message.channelId);
+            eggTrackedChannels.splice(index, 1);
+            eggTracking[message.author.id].channels = eggTrackedChannels;
+          } else {
+            eggTracking[message.author.id].channels.push(message.channelId);
+            message.channel.send("You are now tracking this channel.");
+          }
         } else {
-          eggTracking[message.author.id].channels.push(message.channelId);
-          message.channel.send("You are now tracking this channel.");
+          message.channel.send('Please type `kevent` first and then `gudegg track`.')
         }
         const jsonString = JSON.stringify(eggTracking, null, 2); // write to file
         fs.writeFile('./files/egg-track.json', jsonString, err => {
@@ -141,10 +147,14 @@ client.on("messageCreate", (message) => {
         }
         if(message.content.includes('into your basket!')){
           eggTracking = updateBasket(message, eggTracking);
-          const jsonString = JSON.stringify(eggTracking, null, 2); // write to file
-          fs.writeFile('./files/egg-track.json', jsonString, err => {
-            if (err) return console.log(err);
-          });
+          try { 
+            const jsonString = JSON.stringify(eggTracking, null, 2); // write to file
+            fs.writeFile('./files/egg-track.json', jsonString, err => {
+              if (err) return console.log(err);
+            });
+          } catch (error) {
+            // do nothing
+          }
         }
       }
     }

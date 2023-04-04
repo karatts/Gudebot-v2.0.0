@@ -17,7 +17,6 @@ export function updateEasterTracking(message, tracking){
   let user = message.mentions.repliedUser.id; 
   let eggUsers = Object.keys(tracking);
   let eggList = message.embeds[0].data.fields[0].value;
-  let missingEggs = [];
   let missingEggNums = [];
   let eggRegex = /(:\w+b:)+/gm;
   let alphaRegex = /[a-zA-Z]+/gm;
@@ -25,16 +24,13 @@ export function updateEasterTracking(message, tracking){
   eggList.forEach(egg => {
     egg = egg.replaceAll(':', '');
     egg = egg.replace('b', 'a');
-    missingEggs.push(egg.toLowerCase());
     egg = egg.replace(alphaRegex,'');
     missingEggNums.push(egg);
   })
   if(eggUsers.includes(user)){
-    tracking[user].eggEmotes = missingEggs;
     tracking[user].eggNumbers = missingEggNums;
   } else {
     tracking[user] = {
-      eggEmotes: missingEggs,
       eggNumbers: missingEggNums,
       channels: []
     }
@@ -51,20 +47,15 @@ export function updateBasket(message, tracking){
   let egg = numbers[1];
 
   if(Object.keys(tracking).includes(user)){
-    let eggEmotes = tracking[user].eggEmotes;
     let eggNums = tracking[user].eggNumbers;
     
-    console.log(eggEmotes);
     console.log(eggNums);
+    console.log(egg);
     console.log(eggNums.indexOf(egg));
     
     const indexNums = eggNums.indexOf(egg);
     eggNums.splice(indexNums, 1);
     tracking[user].eggNumbers = eggNums;
-    egg = 'stegg' + egg + 'a';
-    const indexEmote = eggEmotes.indexOf(egg);
-    eggEmotes.splice(indexEmote, 1);
-    tracking[user].eggEmotes = eggEmotes;
     
     return tracking;
   }
@@ -83,28 +74,28 @@ export function eggHunt(message, id, tracking){
       collected.forEach((react)=>{
         let pingList = '';
         // if the react is an egg...
-        console.log(react);
-        console.log(eggs);
-        let reaction = "'"+ react.emoji.name+"'";
+        console.log(react.emoji.name);
+        let reaction = react.emoji.name;
         reaction = reaction.toLowerCase();
-        
-        console.log(typeof reaction);
-        console.log(reaction);
-        console.log(typeof eggs[0]);
-        console.log(eggs.includes(reaction));
-        
-        if (eggs.includes(reaction)){
+        let steggRegex = /(stegg[0-9]+)a/;
+        if (reaction.match(steggRegex)){
           console.log('An egg has dropped...');
           pingList = 'An egg has dropped! ';
+          
+          let numRegex = /([0-9]+)/;
+          let eggNumber = reaction.match(numRegex)[0];
           
           // look through all tracked users...
           for(const user in tracking){
             console.log(user);
             let trackedChannels = tracking[user].channels;
-            let missingEggs = tracking[user].missingEggs;
+            let userMissing = tracking[user].eggNumbers;
             //if tracking this channel and this user is missing this egg...
-            if(trackedChannels.includes(message.channelId) && missingEggs.includes(reaction)){
-              console.log('there\'s a user that needs this egg');
+            console.log(userMissing);
+            console.log(eggNumber);
+            console.log(userMissing.includes(eggNumber));
+            if(trackedChannels.includes(message.channelId) && userMissing.includes(eggNumber)){
+              console.log('Person needs egg...');
               pingList += '<@'+ user + '> ';
             }
           }
