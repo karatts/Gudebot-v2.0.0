@@ -102,21 +102,31 @@ client.on("messageCreate", (message) => {
           eggTracking[message.author.id].eggNumbers.forEach((egg) => {
             eggMessage += egg + ' ';
           });
+           message.channel.send(eggMessage);
+          
+          if(eggTracking[message.author.id].channels.length === 0){
+            message.channel.send('Please type `gudegg track` if you want to receive pings for the eggs you\'re missing in this channel.');
+          }
+        } else {
+          message.channel.send('Please type `kevent` and then `gudegg track` to get started!');
         }
-        message.channel.send(eggMessage);
       }
       
       if(message.content.toLowerCase() === 'gudegg track'){
         let eggUsers = Object.keys(eggTracking);
-        if(eggUsers.includes(message.author.id) && eggTracking[message.author.id].channels.includes(message.channelId)){
-          let eggTrackedChannels = eggTracking[message.author.id].channels;
-          message.channel.send('Tracking removed from this channel');
-          const index = eggTrackedChannels.indexOf(message.channelId);
-          eggTrackedChannels.splice(index, 1);
-          eggTracking[message.author.id].channels = eggTrackedChannels;
+        if(eggUsers.includes(message.author.id)){
+          if(eggTracking[message.author.id].channels.includes(message.channelId)){
+            let eggTrackedChannels = eggTracking[message.author.id].channels;
+            message.channel.send('Tracking removed from this channel');
+            const index = eggTrackedChannels.indexOf(message.channelId);
+            eggTrackedChannels.splice(index, 1);
+            eggTracking[message.author.id].channels = eggTrackedChannels;
+          } else {
+            eggTracking[message.author.id].channels.push(message.channelId);
+            message.channel.send("You are now tracking this channel.");
+          }
         } else {
-          eggTracking[message.author.id].channels.push(message.channelId);
-          message.channel.send("You are now tracking this channel.");
+          message.channel.send('Please type `kevent` first and then `gudegg track`.')
         }
         const jsonString = JSON.stringify(eggTracking, null, 2); // write to file
         fs.writeFile('./files/egg-track.json', jsonString, err => {
@@ -141,10 +151,12 @@ client.on("messageCreate", (message) => {
         }
         if(message.content.includes('into your basket!')){
           eggTracking = updateBasket(message, eggTracking);
-          const jsonString = JSON.stringify(eggTracking, null, 2); // write to file
-          fs.writeFile('./files/egg-track.json', jsonString, err => {
-            if (err) return console.log(err);
-          });
+          if(eggTracking){
+            const jsonString = JSON.stringify(eggTracking, null, 2); // write to file
+            fs.writeFile('./files/egg-track.json', jsonString, err => {
+              if (err) return console.log(err);
+            });
+          }
         }
       }
     }
@@ -252,17 +264,17 @@ app.post('/interactions', async function (req, res) {
         switch(filter) {
           case 'event':
             event = req.body.data.options[i].value;
-            console.log('Tracking event: ' + event);
+            //console.log('Tracking event: ' + event);
             eventChange = true;
             break;
           case 'wishlist':
             wishlist = req.body.data.options[i].value;
-            console.log('Wishlist tracking: ' + wishlist);
+            //console.log('Wishlist tracking: ' + wishlist);
             wlChange = true;
             break;
           case 'testing':
             testing = req.body.data.options[i].value;
-            console.log('Testing tracking: ' + testing);
+            //console.log('Testing tracking: ' + testing);
             testingChange = true;
             break;
           default:
@@ -280,7 +292,7 @@ app.post('/interactions', async function (req, res) {
         // The channel is already being tracked - Just update the values
         if(eventChange){
           if (event === tracking[channel].event){
-             console.log("Event specified is already being tracked; No change");
+             //console.log("Event specified is already being tracked; No change");
             // Event specified is already being tracked; No change
             eventChange = false;
           } else {
@@ -292,11 +304,11 @@ app.post('/interactions', async function (req, res) {
         if(wlChange){
           if (wishlist === tracking[channel].wishlist){
             // Wishlist setting already set
-            console.log("No change to wishlist warning setting");
+            //console.log("No change to wishlist warning setting");
             wlChange = false;
           } else {
             // Update wishlist setting
-            console.log("Update wishlist warning setting");
+            //console.log("Update wishlist warning setting");
             tracking[channel].wishlist = wishlist;
           }
         }
@@ -304,10 +316,10 @@ app.post('/interactions', async function (req, res) {
           if (testing === tracking[channel].testing){
             // Testing setting already set
             testingChange = false;
-            console.log("No change to wishlist warning setting");
+            //console.log("No change to wishlist warning setting");
           } else {
             // Update wishlist setting
-            console.log("Update testing setting");
+            //console.log("Update testing setting");
             tracking[channel].testing = testing;
           }
         }
