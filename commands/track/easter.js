@@ -39,14 +39,17 @@ export function updateEasterTracking(message, tracking){
 }
 
 export function updateBasket(message, tracking){
-  let numRegex = /[0-9]+/;
+  let numRegex = /([0-9])+/g;
   console.log(message.content);
-  console.log(message.content.match(numRegex));
-  let numbers = message.content.match(numRegex);
+  let content = message.content;
+  console.log(content.match(numRegex));
+  let numbers = content.match(numRegex);
+  console.log(numbers);
   let user = numbers[0];
   let egg = numbers[1];
 
   if(Object.keys(tracking).includes(user)){
+    console.log(tracking[user].eggNumbers);
     let eggNums = tracking[user].eggNumbers;
     
     console.log(eggNums);

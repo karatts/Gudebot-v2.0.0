@@ -103,6 +103,10 @@ client.on("messageCreate", (message) => {
             eggMessage += egg + ' ';
           });
            message.channel.send(eggMessage);
+          
+          if(eggTracking[message.author.id].channels.length === 0){
+            message.channel.send('Please type `gudegg track` if you want to receive pings for the eggs you\'re missing in this channel.');
+          }
         } else {
           message.channel.send('Please type `kevent` and then `gudegg track` to get started!');
         }
@@ -147,13 +151,12 @@ client.on("messageCreate", (message) => {
         }
         if(message.content.includes('into your basket!')){
           eggTracking = updateBasket(message, eggTracking);
-          try { 
+          console.log(eggTracking);
+          if(eggTracking){
             const jsonString = JSON.stringify(eggTracking, null, 2); // write to file
             fs.writeFile('./files/egg-track.json', jsonString, err => {
               if (err) return console.log(err);
             });
-          } catch (error) {
-            // do nothing
           }
         }
       }
