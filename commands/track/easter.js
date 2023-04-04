@@ -46,12 +46,10 @@ export function updateBasket(message, tracking){
   let egg = numbers[1];
 
   if(Object.keys(tracking).includes(user)){
-    console.log(tracking[user].eggNumbers);
     let eggNums = tracking[user].eggNumbers;
     const indexNums = eggNums.indexOf(egg);
     eggNums.splice(indexNums, 1);
     tracking[user].eggNumbers = eggNums;
-    
     return tracking;
   }
 }
@@ -82,7 +80,6 @@ export function eggHunt(message, id, tracking){
             let userMissing = tracking[user].eggNumbers;
             //if tracking this channel and this user is missing this egg...
             if(trackedChannels.includes(message.channelId) && userMissing.includes(eggNumber)){
-              console.log('Person needs egg...');
               pingList += '<@'+ user + '> ';
             }
           }
