@@ -151,7 +151,6 @@ client.on("messageCreate", (message) => {
         }
         if(message.content.includes('into your basket!')){
           eggTracking = updateBasket(message, eggTracking);
-          console.log(eggTracking);
           if(eggTracking){
             const jsonString = JSON.stringify(eggTracking, null, 2); // write to file
             fs.writeFile('./files/egg-track.json', jsonString, err => {
@@ -265,17 +264,17 @@ app.post('/interactions', async function (req, res) {
         switch(filter) {
           case 'event':
             event = req.body.data.options[i].value;
-            console.log('Tracking event: ' + event);
+            //console.log('Tracking event: ' + event);
             eventChange = true;
             break;
           case 'wishlist':
             wishlist = req.body.data.options[i].value;
-            console.log('Wishlist tracking: ' + wishlist);
+            //console.log('Wishlist tracking: ' + wishlist);
             wlChange = true;
             break;
           case 'testing':
             testing = req.body.data.options[i].value;
-            console.log('Testing tracking: ' + testing);
+            //console.log('Testing tracking: ' + testing);
             testingChange = true;
             break;
           default:
@@ -293,7 +292,7 @@ app.post('/interactions', async function (req, res) {
         // The channel is already being tracked - Just update the values
         if(eventChange){
           if (event === tracking[channel].event){
-             console.log("Event specified is already being tracked; No change");
+             //console.log("Event specified is already being tracked; No change");
             // Event specified is already being tracked; No change
             eventChange = false;
           } else {
@@ -305,11 +304,11 @@ app.post('/interactions', async function (req, res) {
         if(wlChange){
           if (wishlist === tracking[channel].wishlist){
             // Wishlist setting already set
-            console.log("No change to wishlist warning setting");
+            //console.log("No change to wishlist warning setting");
             wlChange = false;
           } else {
             // Update wishlist setting
-            console.log("Update wishlist warning setting");
+            //console.log("Update wishlist warning setting");
             tracking[channel].wishlist = wishlist;
           }
         }
@@ -317,10 +316,10 @@ app.post('/interactions', async function (req, res) {
           if (testing === tracking[channel].testing){
             // Testing setting already set
             testingChange = false;
-            console.log("No change to wishlist warning setting");
+            //console.log("No change to wishlist warning setting");
           } else {
             // Update wishlist setting
-            console.log("Update testing setting");
+            //console.log("Update testing setting");
             tracking[channel].testing = testing;
           }
         }
