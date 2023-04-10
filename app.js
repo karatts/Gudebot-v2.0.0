@@ -108,7 +108,7 @@ client.on("messageCreate", (message) => {
             message.channel.send('Please type `gudegg track` if you want to receive pings for the eggs you\'re missing in this channel.');
           }
         } else {
-          message.channel.send('Please type `kevent` and then `gudegg track` to get started!');
+            message.channel.send('Please type `kevent` and then `gudegg track` to get started!');
         }
       }
       
@@ -122,10 +122,20 @@ client.on("messageCreate", (message) => {
             eggTrackedChannels.splice(index, 1);
             eggTracking[message.author.id].channels = eggTrackedChannels;
           } else {
-            eggTracking[message.author.id].channels.push(message.channelId);
-            message.channel.send("You are now tracking this channel.");
+            if(eggTracking[message.author.id].ping === false){
+              eggTracking[message.author.id].channels = [];
+              message.channel.send("We are unable to track this channel for you.");
+            } else {
+              eggTracking[message.author.id].channels.push(message.channelId);
+              message.channel.send("You are now tracking this channel.");
+            }
           }
         } else {
+          if(eggTracking[message.author.id].ping === false){
+              message.channel.send("Tracking is not currently available.");
+            } else {
+              message.channel.send('Please type `kevent` first and then `gudegg track`.')
+            }
           message.channel.send('Please type `kevent` first and then `gudegg track`.')
         }
         const jsonString = JSON.stringify(eggTracking, null, 2); // write to file

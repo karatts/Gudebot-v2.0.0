@@ -32,7 +32,8 @@ export function updateEasterTracking(message, tracking){
   } else {
     tracking[user] = {
       eggNumbers: missingEggNums,
-      channels: []
+      channels: [],
+      ping: false
     }
   }
   return tracking;
@@ -50,6 +51,9 @@ export function updateBasket(message, tracking){
     const indexNums = eggNums.indexOf(egg);
     eggNums.splice(indexNums, 1);
     tracking[user].eggNumbers = eggNums;
+    if(tracking[user].eggNumbers.length === 0){
+      tracking[user].ping = false;
+    }
     return tracking;
   }
 }
@@ -79,7 +83,7 @@ export function eggHunt(message, id, tracking){
             let trackedChannels = tracking[user].channels;
             let userMissing = tracking[user].eggNumbers;
             //if tracking this channel and this user is missing this egg...
-            if(trackedChannels.includes(message.channelId) && userMissing.includes(eggNumber)){
+            if(trackedChannels.includes(message.channelId) && userMissing.includes(eggNumber) && userMissing.ping === true){
               pingList += '<@'+ user + '> ';
             }
           }
