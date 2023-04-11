@@ -13,6 +13,10 @@ const attainedEggs = ['<:stEgg1a:818707807896469534>', '<:stEgg2a:81870780749892
 const eggs = ['stegg1a','stegg2a','stegg3a','stegg4a','stegg5a','stegg6a','stegg7a','stegg8a','stegg9a','stegg10a',
              'stegg11a','stegg12a','stegg13a','stegg14a','stegg15a','stegg16a','stegg17a','stegg18a','stegg19a','stegg20a'];
 
+let onlyPing = ['143407462022643712', '1040041183658922046', '342357918038884363',
+                 '297873639045332992', '220704533758738435', '626131394174779393',
+                '413155698097258517', '891142648805609502', '303088768242548740']; // ONLY ping these users -- TEMPORARY --
+
 export function updateEasterTracking(message, tracking){
   let user = message.mentions.repliedUser.id; 
   let eggUsers = Object.keys(tracking);
@@ -32,8 +36,7 @@ export function updateEasterTracking(message, tracking){
   } else {
     tracking[user] = {
       eggNumbers: missingEggNums,
-      channels: [],
-      ping: false
+      channels: []
     }
   }
   return tracking;
@@ -51,9 +54,6 @@ export function updateBasket(message, tracking){
     const indexNums = eggNums.indexOf(egg);
     eggNums.splice(indexNums, 1);
     tracking[user].eggNumbers = eggNums;
-    if(tracking[user].eggNumbers.length === 0){
-      tracking[user].ping = false;
-    }
     return tracking;
   }
 }
@@ -83,7 +83,7 @@ export function eggHunt(message, id, tracking){
             let trackedChannels = tracking[user].channels;
             let userMissing = tracking[user].eggNumbers;
             //if tracking this channel and this user is missing this egg...
-            if(trackedChannels.includes(message.channelId) && userMissing.includes(eggNumber) && userMissing.ping === true){
+            if(trackedChannels.includes(message.channelId) && userMissing.includes(eggNumber) && onlyPing.includes(user)){
               pingList += '<@'+ user + '> ';
             }
           }
