@@ -33,6 +33,7 @@ export async function DiscordRequest(endpoint, options) {
   if (!res.ok) {
     const data = await res.json();
     console.log(res.status);
+    console.log(res);
     throw new Error(JSON.stringify(data));
   }
   // return original response
