@@ -59,22 +59,6 @@ client.once(Events.ClientReady, () => {
   eggTracking = JSON.parse(fs.readFileSync('./files/egg-track.json'));
 });
 
-// client.on(Events.InteractionCreate, async interaction => {
-//   console.log(interaction);
-// 	if (!interaction.isChatInputCommand()) return;
-
-// 	const command = client.commands.get(interaction.commandName);
-
-// 	if (!command) return;
-
-// 	try {
-// 		await command.execute(interaction);
-// 	} catch (error) {
-// 		console.error(error);
-// 		await interaction.reply({ content: 'There was an error while executing this command!', ephemeral: true });
-// 	}
-// });
-
 client.on("messageCreate", (message) => {
   console.log('writing in a server...');
   let trackedChannels = Object.keys(tracking);
