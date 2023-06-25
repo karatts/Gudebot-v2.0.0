@@ -21,7 +21,7 @@ const PAT_COMMAND = {
 };
 
 const EMOTE_TRACKING_COMMAND = {
-  name: 'emote tracking',
+  name: 'emotetracking',
   description: 'emote tracking command',
   type: 1,
 };
