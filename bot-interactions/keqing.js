@@ -37,7 +37,7 @@ export function cardLookup(message){
   }
   
   const emoteFilter = (reaction, user) => {
-    return ['❓'].includes(reaction.emoji.name) && user.id !== '1092436927996760185';
+    return ['❓'].includes(reaction.emoji.name) && user.id !== '1073434541777240205';
   };
 
   message.awaitReactions({ filter: emoteFilter, max: 1, time: 5000, errors: ['time']})
@@ -63,7 +63,7 @@ export function hideHelp(message){
   }
   
   const emoteFilter = (reaction, user) => {
-    return ['❌'].includes(reaction.emoji.name) && user.id !== '1092436927996760185';
+    return ['❌'].includes(reaction.emoji.name) && user.id !== '1073434541777240205';
   };
 
   message.awaitReactions({ filter: emoteFilter, max: 1, time: 5000, errors: ['time']})
