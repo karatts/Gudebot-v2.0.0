@@ -17,7 +17,7 @@ import { vday } from './commands/track/vday.js';
 import { updateEasterTracking, eggHunt, updateBasket } from './commands/track/easter.js';
 import { emoteTracking } from './commands/track/emote.js';
 
-import { cardCodeGenerator, cardLookup } from './bot-interactions/keqing.js';
+import { cardCodeGenerator, cardLookup, hideHelp } from './bot-interactions/keqing.js';
 
 import { createRequire } from "module"; // Bring in the ability to create the 'require' method
 const require = createRequire(import.meta.url); // construct the require method
@@ -92,6 +92,7 @@ client.on("messageCreate", (message) => {
     if(tracking[message.channelId].externalbot === 'enabled' && message.author.id === karutaUID){
       cardCodeGenerator(message); // Adds mag emote to karuta kc response
       cardLookup(message);
+      hideHelp(message);
     }
 
     //track vday
