@@ -17,7 +17,7 @@ import { vday } from './commands/track/vday.js';
 import { updateEasterTracking, eggHunt, updateBasket } from './commands/track/easter.js';
 import { emoteTracking } from './commands/track/emote.js';
 
-import { cardCodeGenerator } from './bot-interactions/keqing.js';
+import { cardCodeGenerator, cardLookup } from './bot-interactions/keqing.js';
 
 import { createRequire } from "module"; // Bring in the ability to create the 'require' method
 const require = createRequire(import.meta.url); // construct the require method
@@ -61,6 +61,19 @@ client.once(Events.ClientReady, () => {
   eggTracking = JSON.parse(fs.readFileSync('./files/egg-track.json'));
 });
 
+client.on("messageUpdate", (oldMessage, newMessage) => {
+  let trackedChannels = Object.keys(tracking);
+  if(trackedChannels.includes(newMessage.channelId)){
+
+   // external bot responses
+  //if(tracking[message.channelId].externalbot === 'enabled' && (message.content.startsWith('kc') || message.content.startsWith('k!collection') || message.content.startsWith('kcollection'))){
+  if(tracking[newMessage.channelId].externalbot === 'enabled' && newMessage.author.id === karutaUID){
+    cardLookup(newMessage);
+  }  
+
+  }
+});
+
 client.on("messageCreate", (message) => {
   console.log('writing in a server...');
   let trackedChannels = Object.keys(tracking);
@@ -78,6 +91,7 @@ client.on("messageCreate", (message) => {
     //if(tracking[message.channelId].externalbot === 'enabled' && (message.content.startsWith('kc') || message.content.startsWith('k!collection') || message.content.startsWith('kcollection'))){
     if(tracking[message.channelId].externalbot === 'enabled' && message.author.id === karutaUID){
       cardCodeGenerator(message); // Adds mag emote to karuta kc response
+      cardLookup(message);
     }
 
     //track vday
