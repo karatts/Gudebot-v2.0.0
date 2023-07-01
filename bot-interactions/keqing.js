@@ -33,7 +33,7 @@ export function cardLookup(message){
         return ['❓'].includes(reaction.emoji.name) && user.id !== process.env.APP_ID;
       };
 
-      message.awaitReactions({ filter: emoteFilter, max: 1})
+      message.awaitReactions({ filter: emoteFilter, max: 1, time: 5000, errors: ['time']})
         .then(collected => {
           const reaction = collected.first();
       
@@ -44,7 +44,8 @@ export function cardLookup(message){
           }
         })
         .catch(collected => {
-          console.log('No help needed.');
+          message.reactions.cache.get('❓').remove()
+	          .catch(error => console.error('Failed to remove reactions:', error));
       });
     }
     if(value.title === 'Character Results'){
@@ -71,10 +72,13 @@ export function hideHelp(message){
       
           if(reaction.emoji.name === '❌') {
             message.channel.send({embeds: [hideBubble]});
+            message.reactions.cache.get('❌').remove()
+	            .catch(error => console.error('Failed to remove reactions:', error));
           }
         })
         .catch(collected => {
-          console.log('No help needed with hiding.');
+          message.reactions.cache.get('❌').remove()
+	          .catch(error => console.error('Failed to remove reactions:', error));
         });
       }
     break;
