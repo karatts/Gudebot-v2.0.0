@@ -69,6 +69,22 @@ const TRACK_COMMAND = {
     },
     {
       "type": 3,
+      "name": "externalbot",
+      "description": "External Bots Integration",
+      "required": false,
+      "choices": [
+        {
+          "name": "Enabled",
+          "value": "enabled"
+        },
+        {
+          "name": "Disabled",
+          "value": "disabled"
+        }
+      ]
+    },
+    {
+      "type": 3,
       "name": "testing",
       "description": "Tester Channel",
       "required": false,

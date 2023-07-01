@@ -17,7 +17,8 @@
   "1076167508689698958": {
     "event": "none",
     "wishlist": "enabled",
-    "testing": "disabled"
+    "testing": "disabled",
+    "externalbot": "enabled"
   },
   "1092027300687663154": {
     "event": "none",
