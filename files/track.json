@@ -2,7 +2,8 @@
   "1031409470003224617": {
     "event": "none",
     "wishlist": "enabled",
-    "testing": "disabled"
+    "testing": "disabled",
+    "externalbot": "enabled"
   },
   "1074513673890058340": {
     "event": "none",
