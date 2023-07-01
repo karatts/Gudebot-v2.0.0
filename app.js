@@ -17,7 +17,7 @@ import { vday } from './commands/track/vday.js';
 import { updateEasterTracking, eggHunt, updateBasket } from './commands/track/easter.js';
 import { emoteTracking } from './commands/track/emote.js';
 
-import { cardCodeGenerator, cardLookup } from './bot-interactions/keqing.js';
+import { cardCodeGenerator, cardLookup, hideHelp } from './bot-interactions/keqing.js';
 
 import { createRequire } from "module"; // Bring in the ability to create the 'require' method
 const require = createRequire(import.meta.url); // construct the require method
@@ -64,12 +64,16 @@ client.once(Events.ClientReady, () => {
 client.on("messageUpdate", (oldMessage, newMessage) => {
   let trackedChannels = Object.keys(tracking);
   if(trackedChannels.includes(newMessage.channelId)){
-
-   // external bot responses
-  //if(tracking[message.channelId].externalbot === 'enabled' && (message.content.startsWith('kc') || message.content.startsWith('k!collection') || message.content.startsWith('kcollection'))){
-  if(tracking[newMessage.channelId].externalbot === 'enabled' && newMessage.author.id === karutaUID){
-    cardLookup(newMessage);
-  }  
+    // external bot responses
+    //if(tracking[message.channelId].externalbot === 'enabled' && (message.content.startsWith('kc') || message.content.startsWith('k!collection') || message.content.startsWith('kcollection'))){
+    
+    if(tracking[newMessage.channelId].externalbot === 'enabled' && newMessage.author.id === karutaUID){
+      if(newMessage.embeds[0] === undefined || newMessage.embeds[0] === null){
+        return;
+      } else {
+        cardLookup(newMessage);
+      }
+    }  
 
   }
 });
@@ -90,8 +94,14 @@ client.on("messageCreate", (message) => {
     // external bot responses
     //if(tracking[message.channelId].externalbot === 'enabled' && (message.content.startsWith('kc') || message.content.startsWith('k!collection') || message.content.startsWith('kcollection'))){
     if(tracking[message.channelId].externalbot === 'enabled' && message.author.id === karutaUID){
-      cardCodeGenerator(message); // Adds mag emote to karuta kc response
-      cardLookup(message);
+      
+      if(message.embeds[0] === undefined || message.embeds[0] === null){
+        return;
+      } else {
+        cardCodeGenerator(message); // Adds mag emote to karuta kc response
+        cardLookup(message);
+        hideHelp(message); 
+      }
     }
 
     //track vday
