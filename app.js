@@ -64,12 +64,16 @@ client.once(Events.ClientReady, () => {
 client.on("messageUpdate", (oldMessage, newMessage) => {
   let trackedChannels = Object.keys(tracking);
   if(trackedChannels.includes(newMessage.channelId)){
-
-   // external bot responses
-  //if(tracking[message.channelId].externalbot === 'enabled' && (message.content.startsWith('kc') || message.content.startsWith('k!collection') || message.content.startsWith('kcollection'))){
-  if(tracking[newMessage.channelId].externalbot === 'enabled' && newMessage.author.id === karutaUID){
-    cardLookup(newMessage);
-  }  
+    // external bot responses
+    //if(tracking[message.channelId].externalbot === 'enabled' && (message.content.startsWith('kc') || message.content.startsWith('k!collection') || message.content.startsWith('kcollection'))){
+    
+    if(tracking[newMessage.channelId].externalbot === 'enabled' && newMessage.author.id === karutaUID){
+      if(newMessage.embeds[0] === undefined || newMessage.embeds[0] === null){
+        return;
+      } else {
+        cardLookup(newMessage);
+      }
+    }  
 
   }
 });
@@ -90,9 +94,14 @@ client.on("messageCreate", (message) => {
     // external bot responses
     //if(tracking[message.channelId].externalbot === 'enabled' && (message.content.startsWith('kc') || message.content.startsWith('k!collection') || message.content.startsWith('kcollection'))){
     if(tracking[message.channelId].externalbot === 'enabled' && message.author.id === karutaUID){
-      cardCodeGenerator(message); // Adds mag emote to karuta kc response
-      cardLookup(message);
-      hideHelp(message);
+      
+      if(message.embeds[0] === undefined || message.embeds[0] === null){
+        return;
+      } else {
+        cardCodeGenerator(message); // Adds mag emote to karuta kc response
+        cardLookup(message);
+        hideHelp(message); 
+      }
     }
 
     //track vday
