@@ -17,6 +17,8 @@ import { vday } from './commands/track/vday.js';
 import { updateEasterTracking, eggHunt, updateBasket } from './commands/track/easter.js';
 import { emoteTracking } from './commands/track/emote.js';
 
+import { cardCodeGenerator } from './bot-interactions/keqing.js';
+
 import { createRequire } from "module"; // Bring in the ability to create the 'require' method
 const require = createRequire(import.meta.url); // construct the require method
 
@@ -71,6 +73,13 @@ client.on("messageCreate", (message) => {
     if(message.author.id === karutaUID && tracking[message.channelId].wishlist === 'enabled' && message.content.includes('A card from your wishlist is dropping!')){
       wishlistMessage(message);
     }
+
+    // external bot responses
+    //if(tracking[message.channelId].externalbot === 'enabled' && (message.content.startsWith('kc') || message.content.startsWith('k!collection') || message.content.startsWith('kcollection'))){
+    if(tracking[message.channelId].externalbot === 'enabled' && message.author.id === karutaUID){
+      cardCodeGenerator(message); // Adds mag emote to karuta kc response
+    }
+
     //track vday
     if(tracking[message.channelId].event === 'vday'){
       vday(message, karutaUID, tracking);
@@ -213,6 +222,7 @@ app.post('/interactions', async function (req, res) {
             returnMessage += '`'+tracking[channel].event+'`';
           }
           returnMessage += "\n > Wishlist Warning: `"+tracking[channel].wishlist+'`';
+          returnMessage += "\n > External Bot Triggers: `"+tracking[channel].externalbot+'`';
           if(tracking[channel].testing === 'enabled'){
             returnMessage += "\n > Testing Channel: `"+tracking[channel].testing+'`';
           }
@@ -235,9 +245,11 @@ app.post('/interactions', async function (req, res) {
       // No values by default
       let event = "none";
       let wishlist = "disabled";
+      let extbot = "disabled";
+      let testing = "disabled";
       let eventChange = false;
       let wlChange = false;
-      let testing = "disabled";
+      let extBotChange = false;
       let testingChange = false;
       
       for(let i = 0; i < req.body.data.options.length; i++){
@@ -254,6 +266,10 @@ app.post('/interactions', async function (req, res) {
             wishlist = req.body.data.options[i].value;
             //console.log('Wishlist tracking: ' + wishlist);
             wlChange = true;
+            break;
+          case 'externalbot':
+            extbot = req.body.data.options[i].value;
+            extBotChange = true;
             break;
           case 'testing':
             testing = req.body.data.options[i].value;
@@ -295,7 +311,18 @@ app.post('/interactions', async function (req, res) {
             tracking[channel].wishlist = wishlist;
           }
         }
-        if(testing === "enabled"){
+        if(extBotChange){
+          if (extbot === tracking[channel].externalbot){
+            // Testing setting already set
+            extBotChange = false;
+            //console.log("No change to wishlist warning setting");
+          } else {
+            // Update wishlist setting
+            //console.log("Update testing setting");
+            tracking[channel].externalbot = extbot;
+          }
+        }
+        if(testingChange){
           if (testing === tracking[channel].testing){
             // Testing setting already set
             testingChange = false;
@@ -311,21 +338,29 @@ app.post('/interactions', async function (req, res) {
         tracking[channel] = {
           "event": event,
           "wishlist": wishlist,
+          "externalbot": extbot,
           "testing": testing
         }
       }
       
       let returnMessage;
-      if (wlChange && eventChange){
-        returnMessage = "The settings for event and wishlist tracking have been updated for this channel.";
-      } else if(wlChange) {
-        returnMessage = "The settings for wishlist warnings have been updated for this channel.";
-      } else if(eventChange){
-        returnMessage = "The settings for event tracking has been updated for this channel.";
-      } else if(testingChange){
-        returnMessage = "The settings for testing has been updated for this channel.";
+      if (wlChange || eventChange || extBotChange || testingChange ){
+        returnMessage = "The following have been updated: ";
+        
+        if(wlChange){
+          returnMessage += "`wishlist` ";
+        }
+        if(eventChange){
+          returnMessage += "`event` ";
+        }
+        if(extBotChange){
+          returnMessage += "`external bot integrations` ";
+        }
+        if(testingChange){
+          returnMessage += "`testing` ";
+        } 
       } else {
-        returnMessage = "Tracking settings for this channel already match the specified settings.";
+        returnMessage = "Tracking has not been changed.";
       }
       
       const jsonString = JSON.stringify(tracking, null, 2); // write to file
