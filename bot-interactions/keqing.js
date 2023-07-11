@@ -1,5 +1,6 @@
 import { EmbedBuilder } from 'discord.js';
 import 'dotenv/config';
+import { removeAllReactions, removeSpecificReactions } from './../custom_utility.js';
 
 const helperBubble = new EmbedBuilder()
   .setColor(0xD3D3D3)
@@ -39,18 +40,15 @@ export function cardLookup(message){
       
           if(reaction.emoji.name === '❓') {
             message.channel.send({embeds: [helperBubble]});
-            message.reactions.cache.get('❓').remove()
-	            .catch(error => console.error('Failed to remove reactions:', error));
+            removeSpecificReactions(message, ['❓']);
           }
         })
         .catch(collected => {
-          message.reactions.cache.get('❓').remove()
-	          .catch(error => console.error('Failed to remove reactions:', error));
+          removeSpecificReactions(message, ['❓']);
       });
     }
     if(value.title === 'Character Results'){
-      message.reactions.removeAll()
-	      .catch(error => console.error('Failed to clear reactions:', error));
+      removeAllReactions(message);
     }
     break;
   }
@@ -72,13 +70,11 @@ export function hideHelp(message){
       
           if(reaction.emoji.name === '❌') {
             message.channel.send({embeds: [hideBubble]});
-            message.reactions.cache.get('❌').remove()
-	            .catch(error => console.error('Failed to remove reactions:', error));
+            removeSpecificReactions(message, ['❌']);
           }
         })
         .catch(collected => {
-          message.reactions.cache.get('❌').remove()
-	          .catch(error => console.error('Failed to remove reactions:', error));
+          removeSpecificReactions(message, ['❌']);
         });
       }
     break;

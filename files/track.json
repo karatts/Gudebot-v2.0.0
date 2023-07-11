@@ -25,5 +25,47 @@
     "event": "none",
     "wishlist": "enabled",
     "testing": "disabled"
+  },
+  "1076170449785991300": {
+    "event": "none",
+    "wishlist": "disabled",
+    "externalbot": "enabled",
+    "testing": "disabled"
+  },
+  "1076170437165330553": {
+    "event": "none",
+    "wishlist": "disabled",
+    "externalbot": "enabled",
+    "testing": "disabled"
+  },
+  "1076321400438149160": {
+    "event": "none",
+    "wishlist": "disabled",
+    "externalbot": "enabled",
+    "testing": "disabled"
+  },
+  "1081452212179435602": {
+    "event": "none",
+    "wishlist": "disabled",
+    "externalbot": "enabled",
+    "testing": "disabled"
+  },
+  "1031409120538013726": {
+    "event": "none",
+    "wishlist": "disabled",
+    "externalbot": "enabled",
+    "testing": "disabled"
+  },
+  "1031409335823241296": {
+    "event": "none",
+    "wishlist": "disabled",
+    "externalbot": "enabled",
+    "testing": "disabled"
+  },
+  "1060434478209703976": {
+    "event": "none",
+    "wishlist": "disabled",
+    "externalbot": "enabled",
+    "testing": "disabled"
   }
 }
