@@ -267,14 +267,11 @@ app.post('/interactions', async function (req, res) {
       }
       
       // No values by default
-      let event = "none";
-      let wishlist = "disabled";
-      let extbot = "disabled";
-      let testing = "disabled";
-      let eventChange = false;
-      let wlChange = false;
-      let extBotChange = false;
-      let testingChange = false;
+      let event, wishlist, extbot, copypasta;
+      let wlChange, eventChange, extBotChange, copypastaChange;
+      event = "none";
+      wishlist = extbot = copypasta = "disabled";
+      eventChange = wlChange = extBotChange = copypastaChange = false;
       
       for(let i = 0; i < req.body.data.options.length; i++){
 
@@ -294,11 +291,6 @@ app.post('/interactions', async function (req, res) {
           case 'externalbot':
             extbot = req.body.data.options[i].value;
             extBotChange = true;
-            break;
-          case 'testing':
-            testing = req.body.data.options[i].value;
-            //console.log('Testing tracking: ' + testing);
-            testingChange = true;
             break;
           default:
             console.log('No filter match');
@@ -346,29 +338,17 @@ app.post('/interactions', async function (req, res) {
             tracking[channel].externalbot = extbot;
           }
         }
-        if(testingChange){
-          if (testing === tracking[channel].testing){
-            // Testing setting already set
-            testingChange = false;
-            //console.log("No change to wishlist warning setting");
-          } else {
-            // Update wishlist setting
-            //console.log("Update testing setting");
-            tracking[channel].testing = testing;
-          }
-        }
       } else {
         // The channel is not yet being tracked - Add the values
         tracking[channel] = {
           "event": event,
           "wishlist": wishlist,
           "externalbot": extbot,
-          "testing": testing
         }
       }
       
       let returnMessage;
-      if (wlChange || eventChange || extBotChange || testingChange ){
+      if (wlChange || eventChange || extBotChange ){
         returnMessage = "The following have been updated: ";
         
         if(wlChange){
@@ -380,9 +360,6 @@ app.post('/interactions', async function (req, res) {
         if(extBotChange){
           returnMessage += "`external bot integrations` ";
         }
-        if(testingChange){
-          returnMessage += "`testing` ";
-        } 
       } else {
         returnMessage = "Tracking has not been changed.";
       }
