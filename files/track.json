@@ -2,70 +2,58 @@
   "1031409470003224617": {
     "event": "none",
     "wishlist": "enabled",
-    "testing": "disabled",
     "externalbot": "enabled"
   },
   "1074513673890058340": {
     "event": "none",
-    "wishlist": "enabled",
-    "testing": "disabled"
+    "wishlist": "enabled"
   },
   "1018701473506398280": {
     "event": "vday",
-    "wishlist": "enabled",
-    "testing": "enabled"
+    "wishlist": "enabled"
   },
   "1076167508689698958": {
     "event": "none",
     "wishlist": "enabled",
-    "testing": "disabled",
     "externalbot": "enabled"
   },
   "1092027300687663154": {
     "event": "none",
-    "wishlist": "enabled",
-    "testing": "disabled"
+    "wishlist": "enabled"
   },
   "1076170449785991300": {
     "event": "none",
     "wishlist": "disabled",
-    "externalbot": "enabled",
-    "testing": "disabled"
+    "externalbot": "enabled"
   },
   "1076170437165330553": {
     "event": "none",
     "wishlist": "disabled",
-    "externalbot": "enabled",
-    "testing": "disabled"
+    "externalbot": "enabled"
   },
   "1076321400438149160": {
     "event": "none",
     "wishlist": "disabled",
-    "externalbot": "enabled",
-    "testing": "disabled"
+    "externalbot": "enabled"
   },
   "1081452212179435602": {
     "event": "none",
     "wishlist": "disabled",
-    "externalbot": "enabled",
-    "testing": "disabled"
+    "externalbot": "enabled"
   },
   "1031409120538013726": {
     "event": "none",
     "wishlist": "disabled",
-    "externalbot": "enabled",
-    "testing": "disabled"
+    "externalbot": "enabled"
   },
   "1031409335823241296": {
     "event": "none",
     "wishlist": "disabled",
-    "externalbot": "enabled",
-    "testing": "disabled"
+    "externalbot": "enabled"
   },
   "1060434478209703976": {
     "event": "none",
     "wishlist": "disabled",
-    "externalbot": "enabled",
-    "testing": "disabled"
+    "externalbot": "enabled"
   }
 }
